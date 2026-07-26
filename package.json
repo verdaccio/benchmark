@@ -1,0 +1,19 @@
+{
+  "name": "verdaccio-install-benchmark",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Benchmark package installation performance across Verdaccio release tags.",
+  "type": "module",
+  "scripts": {
+    "bench": "node scripts/bench-install.mjs",
+    "bench:hyperfine": "node scripts/bench-hyperfine-warm.mjs",
+    "report:hyperfine": "node scripts/report-hyperfine.mjs",
+    "bench:npm": "node scripts/bench-install.mjs --clients npm",
+    "bench:pnpm": "node scripts/bench-install.mjs --clients pnpm",
+    "bench:yarn": "node scripts/bench-install.mjs --clients yarn"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.2.2"
+}
