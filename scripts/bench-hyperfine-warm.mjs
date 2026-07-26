@@ -31,6 +31,7 @@ const runs = Number(args.runs ?? defaults.runs);
 const warmup = Number(args.warmup ?? defaults.warmup);
 const versions = parseVersions(args.versions, defaults.tags);
 const upstreamSpec = args['upstream-spec'] ?? defaults.upstreamSpec;
+const includeNpmjs = Boolean(args['include-npmjs']);
 
 await mkdir(resultsDir, { recursive: true });
 
@@ -70,6 +71,14 @@ try {
       );
     }
 
+    if (includeNpmjs) {
+      hyperfineArgs.push(
+        '--command-name',
+        `npmjs ${client} direct`,
+        `node ${JSON.stringify(installOncePath)} --client ${client} --registry https://registry.npmjs.org/`
+      );
+    }
+
     await run('hyperfine', hyperfineArgs, root, 'inherit');
   }
 } finally {
@@ -83,8 +92,14 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (!arg.startsWith('--')) continue;
     const [key, inlineValue] = arg.slice(2).split('=', 2);
-    parsed[key] = inlineValue ?? argv[i + 1];
-    if (inlineValue === undefined) i += 1;
+    if (inlineValue !== undefined) {
+      parsed[key] = inlineValue;
+    } else if (argv[i + 1] && !argv[i + 1].startsWith('--')) {
+      parsed[key] = argv[i + 1];
+      i += 1;
+    } else {
+      parsed[key] = true;
+    }
   }
   return parsed;
 }

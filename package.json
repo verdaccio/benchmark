@@ -7,6 +7,7 @@
   "scripts": {
     "bench": "node scripts/bench-install.mjs",
     "bench:hyperfine": "node scripts/bench-hyperfine-warm.mjs",
+    "bench:hyperfine:npmjs": "node scripts/bench-hyperfine-warm.mjs --include-npmjs",
     "report:hyperfine": "node scripts/report-hyperfine.mjs",
     "bench:npm": "node scripts/bench-install.mjs --clients npm",
     "bench:pnpm": "node scripts/bench-install.mjs --clients pnpm",

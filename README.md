@@ -51,9 +51,11 @@ pnpm bench:npm
 pnpm bench:pnpm
 pnpm bench:yarn
 pnpm bench:hyperfine
+pnpm bench:hyperfine:npmjs
 pnpm report:hyperfine
 node scripts/bench-install.mjs --samples 5 --clients npm,pnpm
 node scripts/bench-hyperfine-warm.mjs --clients npm --runs 10 --warmup 2
+node scripts/bench-hyperfine-warm.mjs --clients npm --runs 10 --warmup 2 --include-npmjs
 node scripts/bench-install.mjs --upstream npmjs --samples 3 --clients npm
 ```
 
@@ -76,6 +78,7 @@ The report generator writes:
 - The first run includes the cost of `npx` resolving/downloading the Verdaccio binaries and priming `.cache/upstream-storage`. Run once as a preparation pass, then run again for cleaner numbers.
 - Default cold measurements fetch from the local upstream cache, not directly from npmjs.org.
 - Warm measurements are the best signal for Verdaccio serving cached package metadata and tarballs.
+- Use `--include-npmjs` to add a direct npmjs.org baseline. That row intentionally includes external network behavior and should be interpreted separately from the localhost Verdaccio rows.
 - Do not compare results across machines unless CPU, disk, network, Node version, and package-manager versions are controlled.
 
 ## Tools

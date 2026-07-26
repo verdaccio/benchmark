@@ -172,7 +172,7 @@ function renderHtml({ rows, inputPath, generatedAt }) {
     <div class="meta">
       Generated ${escapeHtml(generatedAt.toISOString())}<br>
       Source: <code>${escapeHtml(path.relative(root, inputPath))}</code><br>
-      Scenario: warm <code>npm install</code> through Verdaccio with local cached upstream.
+      Scenario: warm <code>npm install</code> through Verdaccio with local cached upstream. Rows labeled <code>npmjs direct</code> use the public npm registry and include network behavior.
     </div>
 
     <table>
