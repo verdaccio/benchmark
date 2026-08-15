@@ -423,6 +423,183 @@
           "serveTarballReqPerSec": 2020.14
         }
       ]
+    },
+    {
+      "runId": "2026-08-15T18-03-58-010Z",
+      "date": "2026-08-15T18:03:58.015Z",
+      "env": {
+        "node": "v24.19.0",
+        "npm": "11.17.0",
+        "cpu": "unknown",
+        "cores": 10,
+        "platform": "linux",
+        "arch": "arm64"
+      },
+      "versions": {
+        "v6": "6.9.2",
+        "v7": "7.0.0-next-7.23",
+        "v9": "9.0.0-next-9.24",
+        "v5": "5.33.0"
+      },
+      "scenarios": [
+        "warm-install",
+        "proxy-install",
+        "publish",
+        "unpublish",
+        "search",
+        "serve"
+      ],
+      "report": "bench-2026-08-15T18-03-58-010Z.html",
+      "metrics": [
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 2984.37
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 3047.44
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 3142.28
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 3333.4
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 6280.39
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 6317.02
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 6221.55
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 6072.52
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 359.86
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 366.36
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 362.11
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 221.26
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 417.9
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 415.54
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 417.34
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 216.94
+        },
+        {
+          "scenario": "search",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 969.8
+        },
+        {
+          "scenario": "search",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 567.1
+        },
+        {
+          "scenario": "search",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 570.01
+        },
+        {
+          "scenario": "search",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 977.36
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "serveTarballP50Ms": 9,
+          "serveTarballReqPerSec": 1932.88
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "serveTarballP50Ms": 11,
+          "serveTarballReqPerSec": 1618.28
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "serveTarballP50Ms": 11,
+          "serveTarballReqPerSec": 1618.93
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "serveTarballP50Ms": 9,
+          "serveTarballReqPerSec": 2029.76
+        }
+      ]
     }
   ]
 }
