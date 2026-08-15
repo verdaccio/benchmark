@@ -24,8 +24,10 @@ const binRoot = path.join(root, '.cache', 'bin');
 const defaults = {
   versions: { latest: 'latest', 'next-7': 'next-7', 'next-9': 'next-9' },
   scenarios: scenarioNames, // all scenarios by default
-  samples: 5,
-  warmup: 1,
+  // 20 samples: enough for a stable median AND a meaningful p95 in a single
+  // publishable report. Override with --samples for quick iteration.
+  samples: 20,
+  warmup: 2,
   upstream: 'local', // 'local' (primed Verdaccio) or 'npmjs'
   upstreamSpec: 'latest',
   serveRequests: 2000,
