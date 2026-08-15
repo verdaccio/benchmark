@@ -19,10 +19,7 @@
     "build:site": "node scripts/build-site.mjs",
     "docker:build": "docker compose build",
     "docker:bench": "docker compose run --rm bench scripts/bench.mjs --versions v6=latest,v7=next-7,v9=next-9,v5=latest-5",
-    "docker:report": "docker compose run --rm bench scripts/report.mjs",
-    "bench:legacy": "node scripts/bench-install.mjs",
-    "bench:hyperfine": "node scripts/bench-hyperfine-warm.mjs",
-    "report:hyperfine": "node scripts/report-hyperfine.mjs"
+    "docker:report": "docker compose run --rm bench scripts/report.mjs"
   },
   "engines": {
     "node": ">=24"

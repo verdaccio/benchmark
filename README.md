@@ -200,12 +200,14 @@ workflow.) Reports are self-contained HTML, so nothing external is fetched at vi
 ```
 scripts/
   bench.mjs              orchestrator: resolve → install → run scenarios → write results
-  report.mjs             render results JSON to an HTML comparison
-  lib/                   shared helpers (args, proc, net, npm, stats, env, ab, verdaccio)
+  report.mjs             render one run's results JSON to an HTML report
+  report-compare.mjs     version-comparison page from one run
+  report-history.mjs     deep 2021–2023 archive view
+  import-history.mjs     rescue the old archive into results/history
+  snapshot-upstream.mjs  build the frozen upstream snapshot
+  build-site.mjs         assemble the dashboard + site
+  compare-line.sh        one-command Docker comparison sweep
+  lib/                   shared helpers (args, proc, net, npm, stats, env, ab, runs, verdaccio)
   scenarios/             one module per scenario ({ name, unit, run })
 fixtures/install-mixed/  the package.json installed by the install scenarios
 ```
-
-The older single-purpose runners (`bench-install.mjs`, `bench-hyperfine-warm.mjs`,
-`report-hyperfine.mjs`) remain available as `pnpm bench:legacy` / `bench:hyperfine` /
-`report:hyperfine`.
