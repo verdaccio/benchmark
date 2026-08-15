@@ -5,3 +5,5 @@ results/*
 !results/history
 node_modules/
 _site/
+CLAUDE.md 
+AGENTS.md
