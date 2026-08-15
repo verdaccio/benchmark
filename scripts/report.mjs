@@ -15,6 +15,7 @@ const SCENARIO_DESC = {
   'proxy-install': 'Cold cache-miss: empty storage + empty npm cache each sample, forcing proxy fetch + store + serve.',
   publish: 'Time for `npm publish` of a small package (new version each sample).',
   unpublish: 'Time for `npm unpublish --force` (version published untimed beforehand).',
+  search: 'Time for `npm search` (Verdaccio /-/v1/search); storage warmed first. Constant only in --frozen mode.',
 };
 
 const inputPath = args.input ? path.resolve(args.input) : await latestBenchJson();

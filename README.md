@@ -16,6 +16,7 @@ environment, and writes raw + summarized results to `results/`.
 | `proxy-install`  | Cold cache-miss. Empty storage **and** empty npm cache, forcing proxy fetch → store → serve.          | fresh server + fresh cache |
 | `publish`        | `npm publish` latency for a small package (new version each sample; auth via a real token).            | reused server |
 | `unpublish`      | `npm unpublish --force` latency (the version is published untimed beforehand).                         | reused server |
+| `search`         | `npm search` latency against Verdaccio's `/-/v1/search` (storage warmed first). Constant only in `--frozen` mode; in `local` it includes npmjs search round-trips. | reused server |
 | `serve`          | Raw HTTP throughput (req/s + latency percentiles) for the packument, abbreviated packument, and a tarball, hit directly with `ab` against pre-warmed storage — bypasses npm entirely. | reused server |
 
 `warm-install` / `proxy-install` are the client-felt install numbers. `serve` is where

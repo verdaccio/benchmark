@@ -19,6 +19,7 @@ const SCENARIOS = [
   { key: 'proxy-install', label: 'proxy-install', unit: 'ms', metric: 'medianMs' },
   { key: 'publish', label: 'publish', unit: 'ms', metric: 'medianMs' },
   { key: 'unpublish', label: 'unpublish', unit: 'ms', metric: 'medianMs' },
+  { key: 'search', label: 'search', unit: 'ms', metric: 'medianMs' },
   { key: 'serve', label: 'serve — tarball p50 latency', unit: 'ms', metric: 'serveTarballP50Ms', archive: true },
 ];
 

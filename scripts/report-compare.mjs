@@ -20,7 +20,7 @@ const data = JSON.parse(await readFile(inputPath, 'utf8'));
 const title = typeof args.title === 'string' ? args.title : 'Verdaccio version comparison';
 const outputPath = args.output ? path.resolve(args.output) : path.join(root, 'reports', 'compare.html');
 
-const MS_SCENARIOS = ['warm-install', 'proxy-install', 'publish', 'unpublish'];
+const MS_SCENARIOS = ['warm-install', 'proxy-install', 'publish', 'unpublish', 'search'];
 
 // Versions present, ordered oldest → newest by semver; newest is the baseline.
 const versions = [...new Set(data.summary.map((r) => r.version))].sort(cmpSemver);
