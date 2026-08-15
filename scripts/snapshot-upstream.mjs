@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdir, mkdtemp, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +25,13 @@ const manifestPath = path.join(root, '.cache', 'upstream-snapshot.manifest.json'
 
 const args = parseArgs(process.argv.slice(2));
 const spec = args['upstream-spec'] ?? 'latest';
+
+// Idempotent: reuse an existing snapshot unless --force. Lets scripts call this
+// safely before every frozen run without re-priming from npmjs each time.
+if (!args.force && (await access(snapshotTar).then(() => true).catch(() => false))) {
+  console.log(`Snapshot already exists: ${path.relative(root, snapshotTar)} (use --force to rebuild).`);
+  process.exit(0);
+}
 
 const version = await resolveVersion(spec);
 console.log(`Priming a frozen snapshot with verdaccio@${version} ...`);

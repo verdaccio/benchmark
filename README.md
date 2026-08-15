@@ -106,6 +106,28 @@ pnpm bench -- --frozen  # or: pnpm bench:frozen — serve the snapshot offline (
 Refresh the snapshot deliberately (new fixture, or you *want* current metadata) by re-running
 `pnpm snapshot` — that's a conscious baseline change, not silent drift.
 
+## Version comparison pages
+
+A dedicated head-to-head page for one release line (e.g. the whole v6 line), separate from
+the time-series dashboard. It runs a **frozen** Docker sweep across the given versions —
+all default scenarios, including `search` — and renders a page ordered by semver with the
+newest as baseline and % deltas.
+
+```sh
+pnpm compare:v6     # sweeps 6.0.5→6.9.2 (one per minor) in Docker, writes reports/compare-v6.html
+```
+
+For another line, call the generic script directly:
+
+```sh
+scripts/compare-line.sh v9 9.0.0-next-9.20,9.0.0-next-9.24 15
+scripts/compare-line.sh v6 6.0.0,6.0.1,6.0.2,…,6.9.2 10   # patch-level: pass all 40, fewer samples
+```
+
+The script builds the image, ensures the frozen snapshot exists (skipped if present),
+benchmarks in the container, and generates + links the page. Review it (`open _site/index.html`),
+then commit `reports/compare-<label>.html` to pin it as the official comparison.
+
 ## Historical data (2021–2023)
 
 The old Next.js benchmark archive (~2,500 runs, Jun 2021 – Apr 2023) is rescued into
