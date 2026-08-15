@@ -25,6 +25,9 @@ const SCENARIOS = [
 // Stable color per Verdaccio major.
 const MAJOR_COLOR = { 3: '#c2410c', 4: '#a16207', 5: '#0369a1', 6: '#0f766e', 7: '#7c3aed', 9: '#be123c' };
 
+// Keep the site out of search indexes and AI/LLM crawlers (paired with robots.txt).
+const NOINDEX_META = '<meta name="robots" content="noindex, nofollow, noai, noimageai">';
+
 const runs = await readRuns(runsPath);
 const archive = await readFile(archivePath, 'utf8').then((r) => JSON.parse(r)).catch(() => null);
 
@@ -35,14 +38,32 @@ const htmlFiles = (await readdir(reportsDir).catch(() => [])).filter((f) => f.en
 // Copy each report in, injecting a nav bar so pages aren't dead-ends. Prev/next
 // are computed from the current run order, so they're always correct.
 for (const file of htmlFiles) {
-  const html = await readFile(path.join(reportsDir, file), 'utf8');
-  await writeFile(path.join(siteDir, file), injectNav(html, file), 'utf8');
+  let html = await readFile(path.join(reportsDir, file), 'utf8');
+  html = injectNoindex(injectNav(html, file));
+  await writeFile(path.join(siteDir, file), html, 'utf8');
 }
 
 await writeFile(path.join(siteDir, 'index.html'), renderDashboard(), 'utf8');
 await writeFile(path.join(siteDir, 'all.html'), renderAll(htmlFiles), 'utf8');
+await writeFile(path.join(siteDir, 'robots.txt'), robotsTxt(), 'utf8');
 
 console.log(`Built _site/ — ${runs.length} run(s), ${htmlFiles.length} report page(s).`);
+
+// Block all crawlers, and name the AI/LLM bots explicitly. Pair with the
+// <meta name="robots" noindex> injected into every page.
+function robotsTxt() {
+  const aiBots = [
+    'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai',
+    'Google-Extended', 'PerplexityBot', 'CCBot', 'Bytespider', 'Amazonbot', 'Applebot-Extended',
+    'cohere-ai', 'Diffbot', 'FacebookBot', 'Meta-ExternalAgent', 'YouBot', 'Timpibot',
+  ];
+  return [
+    ...aiBots.flatMap((bot) => [`User-agent: ${bot}`, 'Disallow: /', '']),
+    'User-agent: *',
+    'Disallow: /',
+    '',
+  ].join('\n');
+}
 
 // --- dashboard -------------------------------------------------------------
 
@@ -196,6 +217,13 @@ function injectNav(html, file) {
   return html.replace(/<body[^>]*>/i, (m) => `${m}\n${nav}`);
 }
 
+// Ensure a noindex meta tag is present (covers reports rendered before the
+// templates carried it). Idempotent: skips if one already exists.
+function injectNoindex(html) {
+  if (/name=["']robots["']/i.test(html)) return html;
+  return html.replace(/<head[^>]*>/i, (m) => `${m}\n  ${NOINDEX_META}`);
+}
+
 function buildNav(file) {
   // runs are sorted oldest -> newest.
   const i = runs.findIndex((r) => r.report === file);
@@ -231,6 +259,7 @@ function median(values) {
 function page(title, body) {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+${NOINDEX_META}
 <title>${escapeHtml(title)}</title>
 <style>
   :root{color-scheme:light dark;--bg:#f7f8f4;--panel:#fff;--text:#1f2933;--muted:#5b6673;--line:#d7dcca;--accent:#0f766e;--head:#eef1e8;--grid:#e6eadc}

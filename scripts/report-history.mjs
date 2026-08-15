@@ -32,6 +32,7 @@ function renderHtml() {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noai, noimageai">
 <title>Verdaccio benchmark — history (2021–2023)</title>
 <style>
   :root{color-scheme:light dark;--bg:#f7f8f4;--panel:#fff;--text:#1f2933;--muted:#5b6673;--line:#d7dcca;--accent:#0f766e;--head:#eef1e8;--grid:#e6eadc}
