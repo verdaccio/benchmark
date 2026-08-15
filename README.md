@@ -77,6 +77,26 @@ container needs network on the first run.
 - `results/bench-<timestamp>.csv` — flat per-(scenario, version) summary.
 - `reports/bench-<timestamp>.html` — side-by-side comparison across versions (via `pnpm report`).
 
+## Historical data (2021–2023)
+
+The old Next.js benchmark archive (~2,500 runs, Jun 2021 – Apr 2023) is rescued into
+`results/history/` and rendered as a trend report:
+
+```sh
+pnpm import:history   # walk the old repo → results/history/history.{json,csv}
+pnpm report:history   # → reports/history.html (per-version trend charts)
+```
+
+`import:history` reads the old repo (default `/Users/verdaccio/projects/verdaccio-benchmark`,
+override with `--src`); the normalized `history.json`/`history.csv` are committed so the data
+survives independently of that app. Two things to know when reading it:
+
+- It only covers the **serve** family (packument `info` + `tarball`).
+- The archive **changed methodology** partway through — early runs timed npm CLI ops
+  (`npm info`/`npm install jquery`, seconds), later runs timed raw HTTP (`curl`, ms). Each
+  record carries its `method`, and the report keeps the two eras in separate sections. They
+  are not comparable to each other, nor to today's runs (different machine and package).
+
 ## Publishing to GitHub Pages
 
 On every push to `main` that changes a report, `.github/workflows/pages.yml` publishes the

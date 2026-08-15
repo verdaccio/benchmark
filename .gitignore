@@ -1,5 +1,7 @@
 .DS_Store
 .cache/
-results/
+# Ignore per-run benchmark outputs, but keep the rescued 2021-2023 history.
+results/*
+!results/history
 node_modules/
 _site/

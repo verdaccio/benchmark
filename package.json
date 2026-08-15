@@ -10,6 +10,8 @@
     "bench:publish": "node scripts/bench.mjs --scenarios publish,unpublish",
     "bench:serve": "node scripts/bench.mjs --scenarios serve",
     "report": "node scripts/report.mjs",
+    "import:history": "node scripts/import-history.mjs",
+    "report:history": "node scripts/report-history.mjs",
     "build:site": "node scripts/build-site.mjs",
     "docker:build": "docker compose build",
     "docker:bench": "docker compose run --rm bench scripts/bench.mjs --versions v6=latest,v7=next-7,v9=next-9,v5=latest-5",
