@@ -19,7 +19,6 @@ import { scenarioNames, scenarios } from './scenarios/index.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const fixtureDir = path.join(root, 'fixtures', 'install-mixed');
-const resultsDir = path.join(root, 'results');
 const binRoot = path.join(root, '.cache', 'bin');
 
 const defaults = {
@@ -46,6 +45,9 @@ const upstreamMode = args.frozen ? 'frozen' : args.upstream ?? defaults.upstream
 const upstreamSpec = args['upstream-spec'] ?? defaults.upstreamSpec;
 const serveRequests = Number(args['serve-requests'] ?? defaults.serveRequests);
 const serveConcurrency = Number(args['serve-concurrency'] ?? defaults.serveConcurrency);
+// --out-dir writes results somewhere other than results/ (e.g. an OS temp dir),
+// so throwaway comparison runs leave nothing behind and never touch runs.json.
+const resultsDir = args['out-dir'] ? path.resolve(args['out-dir']) : path.join(root, 'results');
 
 for (const name of selectedScenarios) {
   if (!scenarios[name]) {
