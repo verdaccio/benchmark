@@ -84,7 +84,7 @@ The old Next.js benchmark archive (~2,500 runs, Jun 2021 – Apr 2023) is rescue
 
 ```sh
 pnpm import:history   # walk the old repo → results/history/history.{json,csv}
-pnpm report:history   # → reports/history.html (per-version trend charts)
+pnpm report:history   # → reports/archive.html (deep per-version trend, era-separated)
 ```
 
 `import:history` reads the old repo (default `/Users/verdaccio/projects/verdaccio-benchmark`,
@@ -97,19 +97,33 @@ survives independently of that app. Two things to know when reading it:
   record carries its `method`, and the report keeps the two eras in separate sections. They
   are not comparable to each other, nor to today's runs (different machine and package).
 
+## Dashboard & progress over time
+
+`pnpm report` does two things: writes `reports/bench-<timestamp>.html` for that run, and
+appends a compact summary to the committed `results/history/runs.json`. `pnpm build:site`
+turns those into a **dashboard** (`_site/index.html`):
+
+- **Runs by date** — every recorded run, newest first, linking to its full report.
+- **Progress over time** — one chart per scenario, median per Verdaccio major across run
+  dates. The serve chart is seeded with the 2021–2023 archive (hollow points, dashed line);
+  since that came from a different machine, treat the archive→now step as directional.
+
+The raw `bench-*.json` stay gitignored; only the small `runs.json` digest is committed, so
+progress accumulates as you add runs without bloating the repo.
+
 ## Publishing to GitHub Pages
 
-On every push to `main` that changes a report, `.github/workflows/pages.yml` publishes the
-**latest** report to GitHub Pages (newest `reports/bench-*.html` becomes `index.html`;
-`all.html` lists history). Assemble the same site locally with `pnpm build:site` → `_site/`.
+On every push to `main` that changes a report, `.github/workflows/pages.yml` builds the site
+(`build-site.mjs`) and deploys it — `index.html` is the dashboard, individual run reports and
+the `archive.html` deep-dive are linked from it.
 
 The workflow deliberately does **not** run the benchmark — shared CI runners are too noisy
 for trustworthy timings. The intended flow is:
 
 ```sh
 pnpm bench            # (or pnpm docker:bench) on a controlled machine
-pnpm report           # writes reports/bench-<timestamp>.html
-git add reports/bench-*.html && git commit && git push   # CI deploys it to Pages
+pnpm report           # writes reports/bench-<timestamp>.html + updates runs.json
+git add reports/bench-*.html results/history/runs.json && git commit && git push   # CI deploys
 ```
 
 One-time setup: in the repo's **Settings → Pages**, set **Source: GitHub Actions**. (The

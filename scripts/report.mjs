@@ -2,10 +2,12 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from './lib/args.mjs';
+import { buildRunSummary, upsertRun } from './lib/runs.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resultsDir = path.join(root, 'results');
 const reportsDir = path.join(root, 'reports');
+const runsPath = path.join(resultsDir, 'history', 'runs.json');
 const args = parseArgs(process.argv.slice(2));
 
 const SCENARIO_DESC = {
@@ -24,6 +26,12 @@ const outputPath = args.output
 await mkdir(reportsDir, { recursive: true });
 await writeFile(outputPath, renderHtml(data), 'utf8');
 console.log(path.relative(root, outputPath));
+
+// Record this run in the committed digest so the dashboard can track progress.
+if (data.runId && !args['no-index']) {
+  const count = await upsertRun(runsPath, buildRunSummary(data));
+  console.log(`${path.relative(root, runsPath)} (${count} runs)`);
+}
 
 async function latestBenchJson() {
   const files = await readdir(resultsDir);

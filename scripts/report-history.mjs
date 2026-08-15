@@ -10,7 +10,7 @@ import { parseArgs } from './lib/args.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = parseArgs(process.argv.slice(2));
 const inputPath = args.input ? path.resolve(args.input) : path.join(root, 'results', 'history', 'history.json');
-const outputPath = args.output ? path.resolve(args.output) : path.join(root, 'reports', 'history.html');
+const outputPath = args.output ? path.resolve(args.output) : path.join(root, 'reports', 'archive.html');
 
 const data = JSON.parse(await readFile(inputPath, 'utf8'));
 

@@ -1,0 +1,276 @@
+{
+  "runs": [
+    {
+      "runId": "2026-08-15T12-41-06-424Z",
+      "date": "2026-08-15T12:41:06.425Z",
+      "env": {
+        "node": "v24.15.0",
+        "npm": "11.17.0",
+        "cpu": "Apple M1 Pro",
+        "cores": 10,
+        "platform": "darwin",
+        "arch": "arm64"
+      },
+      "versions": {
+        "latest": "6.9.2",
+        "next-7": "7.0.0-next-7.23",
+        "next-9": "9.0.0-next-9.24"
+      },
+      "scenarios": [
+        "warm-install",
+        "proxy-install",
+        "publish",
+        "unpublish",
+        "serve"
+      ],
+      "report": "bench-2026-08-15T12-41-06-424Z.html",
+      "metrics": [
+        {
+          "scenario": "warm-install",
+          "versionLabel": "latest",
+          "version": "6.9.2",
+          "medianMs": 2356.53
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "next-7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 2199.87
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "next-9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 2206.6
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "latest",
+          "version": "6.9.2",
+          "medianMs": 5892.56
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "next-7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 5334.34
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "next-9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 5382.61
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "latest",
+          "version": "6.9.2",
+          "medianMs": 597.69
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "next-7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 554.93
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "next-9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 445.2
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "latest",
+          "version": "6.9.2",
+          "medianMs": 451.32
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "next-7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 481.69
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "next-9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 463.75
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "latest",
+          "version": "6.9.2",
+          "serveTarballP50Ms": 151,
+          "serveTarballReqPerSec": 125.54
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "next-7",
+          "version": "7.0.0-next-7.23",
+          "serveTarballP50Ms": 150,
+          "serveTarballReqPerSec": 127.31
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "next-9",
+          "version": "9.0.0-next-9.24",
+          "serveTarballP50Ms": 147,
+          "serveTarballReqPerSec": 131.27
+        }
+      ]
+    },
+    {
+      "runId": "2026-08-15T12-57-53-566Z",
+      "date": "2026-08-15T12:57:53.567Z",
+      "env": {
+        "node": "v24.19.0",
+        "npm": "11.17.0",
+        "cpu": "unknown",
+        "cores": 10,
+        "platform": "linux",
+        "arch": "arm64"
+      },
+      "versions": {
+        "v6": "6.9.2",
+        "v7": "7.0.0-next-7.23",
+        "v9": "9.0.0-next-9.24",
+        "v5": "5.33.0"
+      },
+      "scenarios": [
+        "warm-install",
+        "proxy-install",
+        "publish",
+        "unpublish",
+        "serve"
+      ],
+      "report": "bench-2026-08-15T12-57-53-566Z.html",
+      "metrics": [
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 2888.88
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 2856.19
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 2932.17
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 3003.9
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 5803.16
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 6266.7
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 6276.27
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 7252.27
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 397.21
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 398.51
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 419.35
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 248.58
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 453.42
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 448.16
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 459.16
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 231.96
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "serveTarballP50Ms": 11,
+          "serveTarballReqPerSec": 1655.58
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "serveTarballP50Ms": 12,
+          "serveTarballReqPerSec": 1571.52
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "serveTarballP50Ms": 12,
+          "serveTarballReqPerSec": 1532.09
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "serveTarballP50Ms": 9,
+          "serveTarballReqPerSec": 1970.39
+        }
+      ]
+    }
+  ]
+}
