@@ -2,3 +2,4 @@
 .cache/
 results/
 node_modules/
+_site/

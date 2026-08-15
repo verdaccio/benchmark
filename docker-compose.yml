@@ -1,0 +1,18 @@
+# Run the benchmark in a container with outputs mounted back to the host.
+#
+#   docker compose build
+#   docker compose run --rm bench                       # default: v6,v7,v9,v5, all scenarios
+#   docker compose run --rm bench scripts/bench.mjs --versions v6=latest,v9=next-9 --samples 10
+#   docker compose run --rm bench scripts/report.mjs    # render latest results to reports/
+#
+services:
+  bench:
+    build: .
+    volumes:
+      - ./results:/app/results
+      - ./reports:/app/reports
+      - bench-cache:/app/.cache
+
+volumes:
+  # Named volume keeps installed Verdaccio binaries + primed upstream across runs.
+  bench-cache:

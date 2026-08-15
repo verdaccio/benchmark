@@ -1,0 +1,10 @@
+# Supply-chain safety: refuse to install any dependency version published less
+# than 7 days (10080 minutes) ago, so freshly compromised releases can't slip in.
+minimumReleaseAge: 10080
+
+# Verdaccio's own packages are exempt — this project deliberately benchmarks
+# freshly published `next-*` releases, which would otherwise be blocked.
+minimumReleaseAgeExclude:
+  - '@verdaccio/*'
+  - '@verdaccio-scope/*'
+  - 'verdaccio-*'

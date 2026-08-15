@@ -1,0 +1,9 @@
+.git
+.cache
+results
+reports
+node_modules
+**/.DS_Store
+Dockerfile
+.dockerignore
+docker-compose.yml

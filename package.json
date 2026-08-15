@@ -5,16 +5,21 @@
   "description": "Benchmark package installation performance across Verdaccio release tags.",
   "type": "module",
   "scripts": {
-    "bench": "node scripts/bench-install.mjs",
+    "bench": "node scripts/bench.mjs",
+    "bench:install": "node scripts/bench.mjs --scenarios warm-install,proxy-install",
+    "bench:publish": "node scripts/bench.mjs --scenarios publish,unpublish",
+    "bench:serve": "node scripts/bench.mjs --scenarios serve",
+    "report": "node scripts/report.mjs",
+    "build:site": "node scripts/build-site.mjs",
+    "docker:build": "docker compose build",
+    "docker:bench": "docker compose run --rm bench scripts/bench.mjs --versions v6=latest,v7=next-7,v9=next-9,v5=latest-5",
+    "docker:report": "docker compose run --rm bench scripts/report.mjs",
+    "bench:legacy": "node scripts/bench-install.mjs",
     "bench:hyperfine": "node scripts/bench-hyperfine-warm.mjs",
-    "bench:hyperfine:npmjs": "node scripts/bench-hyperfine-warm.mjs --include-npmjs",
-    "report:hyperfine": "node scripts/report-hyperfine.mjs",
-    "bench:npm": "node scripts/bench-install.mjs --clients npm",
-    "bench:pnpm": "node scripts/bench-install.mjs --clients pnpm",
-    "bench:yarn": "node scripts/bench-install.mjs --clients yarn"
+    "report:hyperfine": "node scripts/report-hyperfine.mjs"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "packageManager": "pnpm@11.2.2"
 }

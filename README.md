@@ -1,89 +1,126 @@
-# Verdaccio install benchmark
+# Verdaccio benchmark
 
-This project compares package installation performance across these Verdaccio npm tags:
+Compares Verdaccio behavior across release tags (`latest`, `next-7`, `next-9`) on the
+operations that actually matter to a registry: installing, proxying, publishing,
+unpublishing, and raw HTTP serving. **npm** is the reference client.
 
-- `latest`
-- `next-7`
-- `next-9`
+Every run resolves tags to exact versions, installs each Verdaccio version once into an
+isolated prefix (so timings measure Verdaccio, not `npx`), records the machine/toolchain
+environment, and writes raw + summarized results to `results/`.
 
-The benchmark focuses on Verdaccio as a registry used by package managers. It starts isolated Verdaccio instances, points package manager installs at them, and records install durations.
+## Scenarios
 
-By default it also starts a local upstream Verdaccio registry with persistent storage in `.cache/upstream-storage`. That upstream is primed with the fixture dependencies once and then reused, so measured runs use localhost instead of depending on npmjs.org network behavior.
+| Scenario         | What it measures                                                                                     | Setup per sample |
+| ---------------- | ---------------------------------------------------------------------------------------------------- | ---------------- |
+| `warm-install`   | Steady-state install. Verdaccio storage **and** the npm cache are pre-warmed; fresh project each run. | reused server, warm cache |
+| `proxy-install`  | Cold cache-miss. Empty storage **and** empty npm cache, forcing proxy fetch → store → serve.          | fresh server + fresh cache |
+| `publish`        | `npm publish` latency for a small package (new version each sample; auth via a real token).            | reused server |
+| `unpublish`      | `npm unpublish --force` latency (the version is published untimed beforehand).                         | reused server |
+| `serve`          | Raw HTTP throughput (req/s + latency percentiles) for the packument, abbreviated packument, and a tarball, hit directly with `ab` against pre-warmed storage — bypasses npm entirely. | reused server |
 
-## Reasonable plan
-
-1. Measure the workflow users actually feel: install dependencies from a client project through Verdaccio.
-2. Compare the same scenario across `latest`, `next-7`, and `next-9`.
-3. Separate cold and warm behavior:
-   - cold Verdaccio storage: first install against an empty registry cache.
-   - warm Verdaccio storage: prime the registry once, then measure a fresh client install against cached metadata/tarballs.
-4. Keep client caches isolated per run so npm/pnpm/yarn do not hide registry differences.
-5. Run several samples per scenario and compare median/p95 instead of trusting one timing.
-6. Keep config identical across versions: same uplink, storage shape, auth disabled for public reads.
-7. Store raw measurements in `results/` so regressions can be inspected later.
-
-## Current published tags
-
-Checked on 2026-07-26:
-
-- `latest`: `6.8.0`
-- `next-7`: `7.0.0-next-7.23`
-- `next-9`: `9.0.0-next-9.22`
-
-The runner uses tags by default, not pinned versions. To pin exact versions, pass:
-
-```sh
-node scripts/bench-install.mjs --versions latest=6.8.0,next-7=7.0.0-next-7.23,next-9=9.0.0-next-9.22
-```
+`warm-install` / `proxy-install` are the client-felt install numbers. `serve` is where
+version-to-version serving differences show up unmasked by npm's download/extract cost.
 
 ## Run
 
-From this folder:
-
 ```sh
-pnpm bench
+pnpm bench                       # all 5 scenarios, all 3 versions
+pnpm bench:install               # warm-install + proxy-install only
+pnpm bench:publish               # publish + unpublish only
+pnpm bench:serve                 # serve only
+pnpm report                      # render latest results/bench-*.json to reports/*.html
 ```
 
-Useful variants:
+### Options
 
 ```sh
-pnpm bench:npm
-pnpm bench:pnpm
-pnpm bench:yarn
-pnpm bench:hyperfine
-pnpm bench:hyperfine:npmjs
-pnpm report:hyperfine
-node scripts/bench-install.mjs --samples 5 --clients npm,pnpm
-node scripts/bench-hyperfine-warm.mjs --clients npm --runs 10 --warmup 2
-node scripts/bench-hyperfine-warm.mjs --clients npm --runs 10 --warmup 2 --include-npmjs
-node scripts/bench-install.mjs --upstream npmjs --samples 3 --clients npm
+node scripts/bench.mjs \
+  --versions latest=6.9.2,next-7=next-7,next-9=next-9 \  # label=spec; spec is a tag or exact version
+  --scenarios warm-install,proxy-install,publish,unpublish,serve \
+  --samples 5 \                # measured samples per (scenario, version)
+  --warmup 1 \                 # discarded warmup runs before measured samples
+  --upstream local \           # 'local' (primed Verdaccio) or 'npmjs' (real network)
+  --serve-requests 2000 \      # ab request count per endpoint
+  --serve-concurrency 20       # ab concurrency
 ```
 
-The built-in runner writes:
+## Docker
 
-- `results/install-benchmark-<timestamp>.json`
-- `results/install-benchmark-<timestamp>.csv`
+A container gives a clean, reproducible environment (Node 24 + `ab`, no host tooling
+needed). Outputs are mounted back to the host `results/` and `reports/`, and installed
+Verdaccio binaries are cached in a named volume across runs.
 
-The hyperfine warm runner writes:
+Driven entirely through package scripts:
 
-- `results/hyperfine-warm-<client>-<timestamp>.json`
-- `results/hyperfine-warm-<client>-<timestamp>.csv`
+```sh
+pnpm docker:build     # build the image (once, or after changing scripts/)
+pnpm docker:bench     # run v6=latest, v7=next-7, v9=next-9, v5=latest-5, all scenarios
+pnpm docker:report    # render the newest results to reports/*.html
+```
 
-The report generator writes:
+Extra flags append to `docker:bench` after `--`:
 
-- `reports/hyperfine-warm-<client>-<timestamp>.html`
+```sh
+pnpm docker:bench -- --samples 10                       # more samples
+pnpm docker:bench -- --scenarios serve --serve-requests 5000
+pnpm docker:bench -- --versions v6=latest,v9=next-9     # override the version set
+```
 
-## Notes
+Under the hood these wrap `docker compose run --rm bench <cmd>`. You can still call it
+directly for one-offs (e.g. `docker compose run --rm bench scripts/bench.mjs ...`).
+Proxy scenarios reach `registry.npmjs.org` once to prime the local upstream, so the
+container needs network on the first run.
 
-- The first run includes the cost of `npx` resolving/downloading the Verdaccio binaries and priming `.cache/upstream-storage`. Run once as a preparation pass, then run again for cleaner numbers.
-- Default cold measurements fetch from the local upstream cache, not directly from npmjs.org.
-- Warm measurements are the best signal for Verdaccio serving cached package metadata and tarballs.
-- Use `--include-npmjs` to add a direct npmjs.org baseline. That row intentionally includes external network behavior and should be interpreted separately from the localhost Verdaccio rows.
-- Do not compare results across machines unless CPU, disk, network, Node version, and package-manager versions are controlled.
+## Output
 
-## Tools
+- `results/bench-<timestamp>.json` — env, resolved versions, raw samples, and summary.
+- `results/bench-<timestamp>.csv` — flat per-(scenario, version) summary.
+- `reports/bench-<timestamp>.html` — side-by-side comparison across versions (via `pnpm report`).
 
-- Primary tool for warm install comparison: `hyperfine`, because it benchmarks whole commands such as `npm install --registry ...`.
-- Primary tool for cold install comparison: `scripts/bench-install.mjs`, because every cold sample needs a fresh Verdaccio storage and server lifecycle.
-- Not primary: `ab`, because it benchmarks raw HTTP endpoints and does not model package-manager resolution, cache behavior, lockfile behavior, or tarball concurrency.
-- Useful follow-up: `autocannon` or `ab` against specific manifest/tarball URLs only after the install benchmark shows a regression worth isolating.
+## Publishing to GitHub Pages
+
+On every push to `main` that changes a report, `.github/workflows/pages.yml` publishes the
+**latest** report to GitHub Pages (newest `reports/bench-*.html` becomes `index.html`;
+`all.html` lists history). Assemble the same site locally with `pnpm build:site` → `_site/`.
+
+The workflow deliberately does **not** run the benchmark — shared CI runners are too noisy
+for trustworthy timings. The intended flow is:
+
+```sh
+pnpm bench            # (or pnpm docker:bench) on a controlled machine
+pnpm report           # writes reports/bench-<timestamp>.html
+git add reports/bench-*.html && git commit && git push   # CI deploys it to Pages
+```
+
+One-time setup: in the repo's **Settings → Pages**, set **Source: GitHub Actions**. (The
+default branch here is `main`; if your remote uses `master`, change `branches:` in the
+workflow.) Reports are self-contained HTML, so nothing external is fetched at view time.
+
+## Methodology notes
+
+1. **Reproducibility:** tags are resolved to exact versions at run start and stamped into
+   every result file, alongside node/npm/OS/CPU. Results are only comparable within one
+   environment snapshot — never across machines.
+2. **Verdaccio, not `npx`:** each version is installed once into `.cache/bin/<version>` and
+   spawned directly, removing `npx` resolution variance from server startup.
+3. **Local upstream by default:** proxy scenarios uplink to a local Verdaccio primed with the
+   fixture dependencies, so numbers reflect Verdaccio's proxy path rather than npmjs network
+   latency. Use `--upstream npmjs` to deliberately include real network behavior.
+4. **Warmup:** the first run per scenario warms OS disk cache and is discarded (`--warmup`).
+5. **Isolation:** each sample uses fresh temp project dirs and free OS-assigned ports, so a
+   leaked process from a previous run can't collide.
+
+## Layout
+
+```
+scripts/
+  bench.mjs              orchestrator: resolve → install → run scenarios → write results
+  report.mjs             render results JSON to an HTML comparison
+  lib/                   shared helpers (args, proc, net, npm, stats, env, ab, verdaccio)
+  scenarios/             one module per scenario ({ name, unit, run })
+fixtures/install-mixed/  the package.json installed by the install scenarios
+```
+
+The older single-purpose runners (`bench-install.mjs`, `bench-hyperfine-warm.mjs`,
+`report-hyperfine.mjs`) remain available as `pnpm bench:legacy` / `bench:hyperfine` /
+`report:hyperfine`.
