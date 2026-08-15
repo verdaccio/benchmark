@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readRuns } from './lib/runs.mjs';
@@ -32,7 +32,12 @@ await rm(siteDir, { recursive: true, force: true });
 await mkdir(siteDir, { recursive: true });
 
 const htmlFiles = (await readdir(reportsDir).catch(() => [])).filter((f) => f.endsWith('.html'));
-for (const file of htmlFiles) await copyFile(path.join(reportsDir, file), path.join(siteDir, file));
+// Copy each report in, injecting a nav bar so pages aren't dead-ends. Prev/next
+// are computed from the current run order, so they're always correct.
+for (const file of htmlFiles) {
+  const html = await readFile(path.join(reportsDir, file), 'utf8');
+  await writeFile(path.join(siteDir, file), injectNav(html, file), 'utf8');
+}
 
 await writeFile(path.join(siteDir, 'index.html'), renderDashboard(), 'utf8');
 await writeFile(path.join(siteDir, 'all.html'), renderAll(htmlFiles), 'utf8');
@@ -180,6 +185,35 @@ function renderAll(files) {
     .map((f) => `<li><a href="./${escapeHtml(f)}">${escapeHtml(f)}</a></li>`)
     .join('');
   return page('All report pages', `<h1>All report pages</h1><p><a href="./index.html">← Dashboard</a></p><ul>${list || '<li>None yet.</li>'}</ul>`);
+}
+
+// --- nav injection ---------------------------------------------------------
+
+// Insert a sticky nav bar right after <body> so every report links back to the
+// dashboard and to the chronologically adjacent runs.
+function injectNav(html, file) {
+  const nav = buildNav(file);
+  return html.replace(/<body[^>]*>/i, (m) => `${m}\n${nav}`);
+}
+
+function buildNav(file) {
+  // runs are sorted oldest -> newest.
+  const i = runs.findIndex((r) => r.report === file);
+  const link = (href, text) => `<a href="./${escapeHtml(href)}" style="color:#93c5fd;text-decoration:none">${text}</a>`;
+  const spacer = '<span style="color:#4b5563">·</span>';
+  const parts = [link('index.html', '⌂ Dashboard')];
+
+  if (i !== -1) {
+    const older = runs[i - 1];
+    const newer = runs[i + 1];
+    parts.push(spacer);
+    parts.push(older ? link(older.report, `← Older (${older.date.slice(0, 10)})`) : '<span style="color:#6b7280">← Older</span>');
+    parts.push(newer ? link(newer.report, `Newer (${newer.date.slice(0, 10)}) →`) : '<span style="color:#6b7280">Newer →</span>');
+    parts.push(`<span style="color:#9ca3af;margin-left:8px">run ${i + 1} of ${runs.length}</span>`);
+  }
+  parts.push(`<span style="margin-left:auto">${link('all.html', 'All runs')}</span>`);
+
+  return `<nav style="position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:10px 18px;background:#111827;border-bottom:1px solid #374151;font:14px ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif">${parts.join('')}</nav>`;
 }
 
 // --- helpers ---------------------------------------------------------------

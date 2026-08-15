@@ -271,6 +271,158 @@
           "serveTarballReqPerSec": 1970.39
         }
       ]
+    },
+    {
+      "runId": "2026-08-15T13-18-52-770Z",
+      "date": "2026-08-15T13:18:52.776Z",
+      "env": {
+        "node": "v24.19.0",
+        "npm": "11.17.0",
+        "cpu": "unknown",
+        "cores": 10,
+        "platform": "linux",
+        "arch": "arm64"
+      },
+      "versions": {
+        "v6": "6.9.2",
+        "v7": "7.0.0-next-7.23",
+        "v9": "9.0.0-next-9.24",
+        "v5": "5.33.0"
+      },
+      "scenarios": [
+        "warm-install",
+        "proxy-install",
+        "publish",
+        "unpublish",
+        "serve"
+      ],
+      "report": "bench-2026-08-15T13-18-52-770Z.html",
+      "metrics": [
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 3498.65
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 3385.78
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 3121.15
+        },
+        {
+          "scenario": "warm-install",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 3270.1
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 6091.02
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 6038.85
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 5973.74
+        },
+        {
+          "scenario": "proxy-install",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 6175.67
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 356.59
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 361.87
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 370.35
+        },
+        {
+          "scenario": "publish",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 234.83
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "medianMs": 424.23
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "medianMs": 420.97
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "medianMs": 432.72
+        },
+        {
+          "scenario": "unpublish",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "medianMs": 214.13
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v6",
+          "version": "6.9.2",
+          "serveTarballP50Ms": 9,
+          "serveTarballReqPerSec": 1915.78
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v7",
+          "version": "7.0.0-next-7.23",
+          "serveTarballP50Ms": 11,
+          "serveTarballReqPerSec": 1631.88
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v9",
+          "version": "9.0.0-next-9.24",
+          "serveTarballP50Ms": 11,
+          "serveTarballReqPerSec": 1632.37
+        },
+        {
+          "scenario": "serve",
+          "versionLabel": "v5",
+          "version": "5.33.0",
+          "serveTarballP50Ms": 9,
+          "serveTarballReqPerSec": 2020.14
+        }
+      ]
     }
   ]
 }
