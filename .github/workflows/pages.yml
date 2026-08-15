@@ -9,7 +9,8 @@ on:
     branches: [main]
     paths:
       - 'reports/**'
-      - 'scripts/build-site.mjs'
+      - 'results/history/**'
+      - 'scripts/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
