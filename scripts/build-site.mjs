@@ -77,6 +77,8 @@ function renderDashboard() {
     `<h1>Verdaccio benchmark</h1>
     <p class="sub">${runs.length} run${runs.length === 1 ? '' : 's'} recorded${latest ? ` · latest ${escapeHtml(latest.date.slice(0, 16).replace('T', ' '))} on ${escapeHtml(latest.env.cpu ?? 'unknown CPU')}` : ''}</p>
 
+    ${compareSection()}
+
     <h2>Runs by date</h2>
     ${runsTable()}
 
@@ -86,6 +88,22 @@ function renderDashboard() {
 
     <p class="foot"><a href="./archive.html">Deep 2021–2023 archive →</a> · <a href="./all.html">All report pages →</a></p>`
   );
+}
+
+// Dedicated version-comparison pages (reports/compare-*.html), pinned separately
+// from the time-series dashboard.
+function compareSection() {
+  const pages = htmlFiles.filter((f) => /^compare[-.]/.test(f)).sort();
+  if (!pages.length) return '';
+  const items = pages
+    .map((f) => {
+      const label = f.replace(/^compare-?/, '').replace(/\.html$/, '') || 'versions';
+      return `<li><a href="./${escapeHtml(f)}">Compare: ${escapeHtml(label)}</a></li>`;
+    })
+    .join('');
+  return `<h2>Version comparisons</h2>
+    <p class="desc">Head-to-head across versions from a pinned run (same metrics).</p>
+    <ul>${items}</ul>`;
 }
 
 function runsTable() {
