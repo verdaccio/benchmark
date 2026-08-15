@@ -36,30 +36,32 @@ export async function installBinary(version, binRoot) {
 
 // A Verdaccio config string. auth + publish/unpublish are always enabled so the
 // same config serves read-only install scenarios and the publish/unpublish ones.
-export function createConfig({ storageDir, uplinkUrl }) {
+// When `offline` is true, no uplink/proxy is configured: the server serves only
+// what is already in storage. Used for the frozen upstream snapshot, so metadata
+// bytes stay identical over time instead of growing as npm publishes new versions.
+export function createConfig({ storageDir, uplinkUrl, offline = false }) {
   const htpasswdPath = path.join(storageDir, 'htpasswd');
+  const proxy = offline ? [] : ['    proxy: npmjs'];
   return [
     `storage: ${storageDir}`,
     'auth:',
     '  htpasswd:',
     `    file: ${htpasswdPath}`,
     '    max_users: 1000',
-    'uplinks:',
-    '  npmjs:',
-    `    url: ${uplinkUrl}`,
-    '    max_fails: 10',
-    '    timeout: 60s',
+    ...(offline
+      ? []
+      : ['uplinks:', '  npmjs:', `    url: ${uplinkUrl}`, '    max_fails: 10', '    timeout: 60s']),
     'packages:',
     "  '@*/*':",
     '    access: $all',
     '    publish: $authenticated',
     '    unpublish: $authenticated',
-    '    proxy: npmjs',
+    ...proxy,
     "  '**':",
     '    access: $all',
     '    publish: $authenticated',
     '    unpublish: $authenticated',
-    '    proxy: npmjs',
+    ...proxy,
     'logs:',
     '  - {type: stdout, format: pretty, level: error}',
     '',

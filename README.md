@@ -77,6 +77,34 @@ container needs network on the first run.
 - `results/bench-<timestamp>.csv` — flat per-(scenario, version) summary.
 - `reports/bench-<timestamp>.html` — side-by-side comparison across versions (via `pnpm report`).
 
+## Constant comparisons over time (frozen upstream)
+
+Pinning fixture versions is **not** enough for comparisons months apart. When Verdaccio
+proxies a package it fetches the *full packument* (every version), and that grows every time
+npm publishes — e.g. `typescript`'s packument is ~20 MB today and keeps growing. So any
+metadata-touching scenario (`serve` info, `proxy-install`, `warm-install` revalidation) drifts
+over time due to npm, not Verdaccio. Tarballs are immutable, so tarball serving is unaffected.
+
+The fix is a **frozen snapshot**: prime a Verdaccio from npmjs once, archive its storage, then
+run **offline** against that snapshot so every run sees byte-identical metadata.
+
+```sh
+pnpm snapshot           # prime once → .cache/upstream-snapshot.tar.gz + a committed manifest
+pnpm bench -- --frozen  # or: pnpm bench:frozen — serve the snapshot offline (no npmjs)
+```
+
+- Both the tarball and its manifest live under `.cache/` and are **gitignored** — the
+  snapshot is a local dataset, not committed. Reused across runs so results stay comparable
+  indefinitely on your machine.
+- `.cache/upstream-snapshot.manifest.json` records the snapshot's sha256, date, and
+  per-package metadata sizes; frozen runs stamp that provenance into their result file.
+- To compare on another machine or in CI, share the tarball + manifest out-of-band (e.g. a
+  GitHub release asset) and verify the sha256; regenerating from npmjs would produce
+  *different* (newer) metadata and defeat the purpose.
+
+Refresh the snapshot deliberately (new fixture, or you *want* current metadata) by re-running
+`pnpm snapshot` — that's a conscious baseline change, not silent drift.
+
 ## Historical data (2021–2023)
 
 The old Next.js benchmark archive (~2,500 runs, Jun 2021 – Apr 2023) is rescued into

@@ -10,6 +10,8 @@
     "bench:publish": "node scripts/bench.mjs --scenarios publish,unpublish",
     "bench:serve": "node scripts/bench.mjs --scenarios serve",
     "report": "node scripts/report.mjs",
+    "snapshot": "node scripts/snapshot-upstream.mjs",
+    "bench:frozen": "node scripts/bench.mjs --frozen",
     "import:history": "node scripts/import-history.mjs",
     "report:history": "node scripts/report-history.mjs",
     "build:site": "node scripts/build-site.mjs",

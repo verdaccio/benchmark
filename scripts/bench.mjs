@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -7,6 +7,7 @@ import { parseArgs, parseVersions, splitArg } from './lib/args.mjs';
 import { captureEnv } from './lib/env.mjs';
 import { getFreePort } from './lib/net.mjs';
 import { makeProject, removeDir, scratchDir, timeInstall } from './lib/npm.mjs';
+import { run } from './lib/proc.mjs';
 import {
   createConfig,
   installBinary,
@@ -39,7 +40,9 @@ const versions = parseVersions(args.versions, defaults.versions);
 const selectedScenarios = splitArg(args.scenarios, defaults.scenarios);
 const samples = Number(args.samples ?? defaults.samples);
 const warmup = Number(args.warmup ?? defaults.warmup);
-const upstreamMode = args.upstream ?? defaults.upstream;
+// --frozen serves a fixed snapshot (offline) so metadata bytes stay constant
+// across runs; otherwise 'local' re-primes from npmjs and packuments grow.
+const upstreamMode = args.frozen ? 'frozen' : args.upstream ?? defaults.upstream;
 const upstreamSpec = args['upstream-spec'] ?? defaults.upstreamSpec;
 const serveRequests = Number(args['serve-requests'] ?? defaults.serveRequests);
 const serveConcurrency = Number(args['serve-concurrency'] ?? defaults.serveConcurrency);
@@ -186,6 +189,7 @@ async function prepareUpstream(mode, spec) {
   if (mode === 'npmjs') {
     return { url: 'https://registry.npmjs.org/', info: { mode, url: 'https://registry.npmjs.org/' }, stop: undefined };
   }
+  if (mode === 'frozen') return prepareFrozenUpstream(spec);
   if (mode !== 'local') throw new Error(`Unsupported upstream mode: ${mode}`);
 
   const version = await resolveVersion(spec);
@@ -203,6 +207,40 @@ async function prepareUpstream(mode, spec) {
     url: server.registry,
     info: { mode, spec, version, url: server.registry, storageDir },
     stop: () => server.stop(),
+  };
+}
+
+// Restore the committed snapshot and serve it OFFLINE, so every run — today or in
+// a year — sees byte-identical packuments and tarballs. Requires `pnpm snapshot`.
+async function prepareFrozenUpstream(spec) {
+  const snapshotTar = path.join(root, '.cache', 'upstream-snapshot.tar.gz');
+  const manifestPath = path.join(root, '.cache', 'upstream-snapshot.manifest.json');
+  const ok = await access(snapshotTar).then(() => true).catch(() => false);
+  if (!ok) {
+    throw new Error(`No frozen snapshot at ${path.relative(root, snapshotTar)}. Create one with:  pnpm snapshot`);
+  }
+  const manifest = await readFile(manifestPath, 'utf8').then((r) => JSON.parse(r)).catch(() => null);
+
+  const version = await resolveVersion(spec);
+  const binPath = binPaths[version] ?? (await installBinary(version, binRoot));
+  const workRoot = await scratchDir('vbench-frozen-');
+  const storageDir = path.join(workRoot, 'storage');
+  await mkdir(storageDir, { recursive: true });
+  await run('tar', ['-xzf', snapshotTar, '-C', storageDir]);
+
+  const configPath = path.join(workRoot, 'config.yaml');
+  await writeFile(configPath, createConfig({ storageDir, offline: true }), 'utf8');
+  const port = await getFreePort();
+  const server = await startVerdaccio({ binPath, configPath, port });
+
+  console.log(`Frozen upstream: snapshot ${manifest?.snapshot?.sha256?.slice(0, 12) ?? '?'}… (${manifest?.createdAt?.slice(0, 10) ?? 'unknown date'})`);
+  return {
+    url: server.registry,
+    info: { mode: 'frozen', version, url: server.registry, snapshot: manifest?.snapshot ?? null, snapshotCreatedAt: manifest?.createdAt ?? null },
+    stop: async () => {
+      await server.stop();
+      await removeDir(workRoot);
+    },
   };
 }
 
