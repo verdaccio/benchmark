@@ -8,10 +8,18 @@
 services:
   bench:
     build: .
+    environment:
+      # Signals the harness it runs inside a container: Docker-image targets are
+      # launched as sibling containers on the shared network (docker-out-of-docker)
+      # rather than published to the host.
+      - VBENCH_IN_CONTAINER=1
     volumes:
       - ./results:/app/results
       - ./reports:/app/reports
+      - ./tarballs:/app/tarballs
       - bench-cache:/app/.cache
+      # Host Docker socket: lets `docker:<image>` targets run as sibling containers.
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   # Named volume keeps installed Verdaccio binaries + primed upstream across runs.

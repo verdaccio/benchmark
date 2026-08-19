@@ -5,5 +5,12 @@ results/*
 !results/history
 node_modules/
 _site/
-CLAUDE.md 
+CLAUDE.md
 AGENTS.md
+# Local unpublished Verdaccio builds for benchmarking — keep the folder, ignore the tarballs.
+tarballs/*
+!tarballs/README.md
+# Local Claude Code skills — repo-local only, never committed.
+.claude/skills/
+# Optimization / handoff reports — local only, never committed (see .claude/skills/optimization-report).
+optimization-reports/

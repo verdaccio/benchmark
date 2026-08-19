@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noai, noimageai">
+<title>Verdaccio 5/6/7/master — monorepo (100 pkgs)</title>
+<style>
+  :root{color-scheme:light dark;--bg:#f7f8f4;--panel:#fff;--text:#1f2933;--muted:#5b6673;--line:#d7dcca;--accent:#0f766e;--bar:#7c3aed;--barbase:#0f766e;--head:#eef1e8;--good:#15803d;--bad:#b91c1c}
+  @media(prefers-color-scheme:dark){:root{--bg:#14181c;--panel:#1c2127;--text:#e6e9ec;--muted:#9aa4af;--line:#2c333b;--accent:#4fd1c5;--bar:#a78bfa;--barbase:#4fd1c5;--head:#232a31;--good:#4ade80;--bad:#f87171}}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+  main{width:min(1000px,calc(100% - 32px));margin:40px auto}
+  h1{margin:0 0 4px;font-size:30px}h2{margin:34px 0 8px;font-size:20px}
+  .sub{color:var(--muted);margin:0 0 6px;line-height:1.5}.desc{color:var(--muted);margin:0 0 10px}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);margin-top:6px}
+  th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;font-size:14px}
+  th:first-child,td:first-child{text-align:left}th{font-size:12px;color:var(--muted);background:var(--head)}
+  tr:last-child td{border-bottom:0}
+  .base{font-weight:700}.good{color:var(--good)}.bad{color:var(--bad)}
+  .bars{display:grid;gap:6px;margin-top:10px}
+  .bar-row{display:grid;grid-template-columns:70px 1fr 132px;gap:10px;align-items:center;font-size:13px}
+  .track{height:13px;background:var(--head);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .fill{height:100%;background:var(--bar)}.fill.base{background:var(--barbase)}
+  code{background:var(--head);padding:2px 5px;border-radius:4px}
+  pre{background:var(--head);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:12.5px;line-height:1.45;margin:0}
+  .cfgcols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+  .cfgcols h3{margin:0 0 6px;font-size:13px;color:var(--muted);font-weight:600}
+  @media(max-width:640px){.cfgcols{grid-template-columns:1fr}}
+</style></head><body><main>
+  <h1>Verdaccio 5/6/7/master — monorepo (100 pkgs)</h1>
+  <div class="sub">8 versions · <code>100</code> packages per release · baseline <code>nightly-master+img+cache</code> (newest) · upstream: local<br>
+    Source run 2026-08-19 06:33 · 3 samples on unknown</div>
+  <p class="desc">Δ is versus the baseline; lower is better (green = faster). "Release" is the total <code>lerna publish</code> wall-clock; throughput is packages/second.</p>
+  <h2>Release (lerna publish, 100 packages)</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Version</th><th>Median</th><th>p95</th><th>Δ vs nightly-master+img+cache</th><th>pkg/s</th></tr></thead>
+      <tbody><tr class="">
+        <td>5.33.0</td>
+        <td>2.18s</td>
+        <td>2.20s</td>
+        <td class="bad">+2.9%</td>
+        <td>45.9</td>
+      </tr><tr class="">
+        <td>5.33.0+cache</td>
+        <td>2.07s</td>
+        <td>2.20s</td>
+        <td class="good">-2.1%</td>
+        <td>48.3</td>
+      </tr><tr class="">
+        <td>6.x-next+img</td>
+        <td>15.99s</td>
+        <td>17.95s</td>
+        <td class="bad">+656.0%</td>
+        <td>6.3</td>
+      </tr><tr class="">
+        <td>6.x-next+img+cache</td>
+        <td>1.89s</td>
+        <td>2.26s</td>
+        <td class="good">-10.8%</td>
+        <td>53.0</td>
+      </tr><tr class="">
+        <td>7.x-next+img</td>
+        <td>15.21s</td>
+        <td>15.34s</td>
+        <td class="bad">+619.2%</td>
+        <td>6.6</td>
+      </tr><tr class="">
+        <td>7.x-next+img+cache</td>
+        <td>2.02s</td>
+        <td>2.08s</td>
+        <td class="good">-4.6%</td>
+        <td>49.6</td>
+      </tr><tr class="">
+        <td>nightly-master+img</td>
+        <td>15.27s</td>
+        <td>15.33s</td>
+        <td class="bad">+622.2%</td>
+        <td>6.5</td>
+      </tr><tr class="base">
+        <td>nightly-master+img+cache (base)</td>
+        <td>2.12s</td>
+        <td>2.13s</td>
+        <td class="">0%</td>
+        <td>47.3</td>
+      </tr></tbody></table></div>
+    <div class="bars"><div class="bar-row"><div>5.33.0</div>
+      <div class="track"><div class="fill " style="width:14%"></div></div>
+      <div>2.18s</div></div><div class="bar-row"><div>5.33.0+cache</div>
+      <div class="track"><div class="fill " style="width:13%"></div></div>
+      <div>2.07s</div></div><div class="bar-row"><div>6.x-next+img</div>
+      <div class="track"><div class="fill " style="width:100%"></div></div>
+      <div>15.99s</div></div><div class="bar-row"><div>6.x-next+img+cache</div>
+      <div class="track"><div class="fill " style="width:12%"></div></div>
+      <div>1.89s</div></div><div class="bar-row"><div>7.x-next+img</div>
+      <div class="track"><div class="fill " style="width:95%"></div></div>
+      <div>15.21s</div></div><div class="bar-row"><div>7.x-next+img+cache</div>
+      <div class="track"><div class="fill " style="width:13%"></div></div>
+      <div>2.02s</div></div><div class="bar-row"><div>nightly-master+img</div>
+      <div class="track"><div class="fill " style="width:96%"></div></div>
+      <div>15.27s</div></div><div class="bar-row"><div>nightly-master+img+cache</div>
+      <div class="track"><div class="fill base" style="width:13%"></div></div>
+      <div>2.12s</div></div></div>
+  <h2>Auth cache configuration</h2>
+    <p class="desc">Every version is measured twice. The harness injects the <em>same</em> config into the
+      target for each pair (<code>createConfig</code> in <code>scripts/lib/verdaccio.mjs</code>);
+      the only difference is the <code>server.legacyAuthCache</code> block. That cache memoizes successful
+      legacy Bearer-token validations so <strong>bcrypt does not re-run on every authenticated request</strong>
+      — it is a Verdaccio 7.x / 9.x feature (and 6.10+). Versions that don't support it (e.g. 5.x, which
+      uses <code>crypt</code>) receive the block but ignore it, so their <code>+cache</code> run shows no effect.
+      Compare mode uses the harness defaults (<code>ttlMs: 30000</code>, <code>maxEntries: 1000</code>);
+      override with <code>--legacy-auth-cache-ttl</code>.</p>
+    <div class="cfgcols">
+      <div><h3>Without cache (base variant)</h3><pre>auth:
+  htpasswd:
+    file: &lt;storage&gt;/htpasswd
+    max_users: 1000
+# no server.legacyAuthCache block →
+# bcrypt runs on every authenticated request</pre></div>
+      <div><h3>With cache (<code>+cache</code> variant)</h3><pre>server:
+  legacyAuthCache:
+    enabled: true
+    ttlMs: 30000
+    maxEntries: 1000
+auth:
+  htpasswd:
+    file: &lt;storage&gt;/htpasswd
+    max_users: 1000</pre></div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Image</th><th>No-cache run</th><th><code>+cache</code> run</th><th>Effect (measured)</th></tr></thead>
+      <tbody><tr><td>5.33.0</td>
+        <td><code>server.legacyAuthCache</code> absent</td>
+        <td><code>enabled: true, ttlMs: 30000, maxEntries: 1000</code></td>
+        <td><span class="muted">no effect</span> · 2.18s → 2.07s <span class="muted">(-5%)</span></td></tr><tr><td>6.x-next+img</td>
+        <td><code>server.legacyAuthCache</code> absent</td>
+        <td><code>enabled: true, ttlMs: 30000, maxEntries: 1000</code></td>
+        <td><span class="good">honored</span> · 15.99s → 1.89s <span class="good">(-88%)</span></td></tr><tr><td>7.x-next+img</td>
+        <td><code>server.legacyAuthCache</code> absent</td>
+        <td><code>enabled: true, ttlMs: 30000, maxEntries: 1000</code></td>
+        <td><span class="good">honored</span> · 15.21s → 2.02s <span class="good">(-87%)</span></td></tr><tr><td>nightly-master+img</td>
+        <td><code>server.legacyAuthCache</code> absent</td>
+        <td><code>enabled: true, ttlMs: 30000, maxEntries: 1000</code></td>
+        <td><span class="good">honored</span> · 15.27s → 2.12s <span class="good">(-86%)</span></td></tr></tbody></table></div>
+  
+  <h2>Sources</h2>
+    <p class="desc">What each variant actually is. Docker images use mutable tags, so the digest + build date pin the exact build measured. (<code>+cache</code>/<code>+filter</code> variants are config toggles on the same source.)</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Source</th></tr></thead>
+      <tbody><tr><td>5.33.0</td><td>npm package <code>verdaccio@5.33.0</code></td></tr><tr><td>6.x-next+img</td><td>Docker image <code>verdaccio/verdaccio:6.x-next</code> · <span class="muted">sha256:e9da1bb5dc6f…</span> · built 2026-08-18</td></tr><tr><td>7.x-next+img</td><td>Docker image <code>verdaccio/verdaccio:7.x-next</code> · <span class="muted">sha256:ba55255e374f…</span> · built 2026-08-18</td></tr><tr><td>nightly-master+img</td><td>Docker image <code>verdaccio/verdaccio:nightly-master</code> · <span class="muted">sha256:10ddb9813fd1…</span> · built 2026-08-18</td></tr></tbody></table></div>
+</main></body></html>

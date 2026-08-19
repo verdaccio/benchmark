@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noai, noimageai">
+<title>Verdaccio 5/6/7/master — large packuments</title>
+<style>
+  :root{color-scheme:light dark;--bg:#f7f8f4;--panel:#fff;--text:#1f2933;--muted:#5b6673;--line:#d7dcca;--accent:#0f766e;--bar:#7c3aed;--barbase:#0f766e;--head:#eef1e8;--good:#15803d;--bad:#b91c1c}
+  @media(prefers-color-scheme:dark){:root{--bg:#14181c;--panel:#1c2127;--text:#e6e9ec;--muted:#9aa4af;--line:#2c333b;--accent:#4fd1c5;--bar:#a78bfa;--barbase:#4fd1c5;--head:#232a31;--good:#4ade80;--bad:#f87171}}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+  main{width:min(1000px,calc(100% - 32px));margin:40px auto}
+  h1{margin:0 0 4px;font-size:30px}h2{margin:34px 0 8px;font-size:20px}
+  .sub{color:var(--muted);margin:0 0 6px;line-height:1.5}.desc{color:var(--muted);margin:0 0 10px}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);margin-top:6px}
+  th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;font-size:14px}
+  th:first-child,td:first-child{text-align:left}th{font-size:12px;color:var(--muted);background:var(--head)}
+  tr:last-child td{border-bottom:0}
+  .base{font-weight:700}.good{color:var(--good)}.bad{color:var(--bad)}
+  code{background:var(--head);padding:2px 5px;border-radius:4px}
+</style></head><body><main>
+  <h1>Verdaccio 5/6/7/master — large packuments</h1>
+  <div class="sub">4 variants · baseline <code>nightly-master+img</code> (newest) · upstream: npmjs · concurrency 10<br>
+    Source run 2026-08-18 18:05 on unknown</div>
+  <p class="desc"><strong>Filter:</strong> <code>@verdaccio/package-filter</code> — config: <code>none</code>. Variants labeled <code>+filter</code> have it enabled; the others configure no filters at all.</p>
+  <p class="desc">Warm packument serving (storage cache hits). Higher req/s is better; Δ is req/s vs the baseline variant. Large version counts / big packuments are where the filter — and packument size itself — would show.</p>
+  <h2>typescript <span class="desc">· 3799 versions · 21.4 MB (unfiltered)</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Versions</th><th>MB</th><th>Req/s</th><th>Δ vs nightly-master+img</th><th>p95</th><th>mean</th></tr></thead>
+      <tbody><tr class="">
+        <td>5.33.0</td>
+        <td>3799</td>
+        <td>21.4</td>
+        <td>3.4</td>
+        <td class="good">+4.9%</td>
+        <td>3392ms</td>
+        <td>2933ms</td>
+      </tr><tr class="">
+        <td>6.x-next+img</td>
+        <td>3799</td>
+        <td>21.5</td>
+        <td>3.5</td>
+        <td class="good">+8.0%</td>
+        <td>3263ms</td>
+        <td>2847ms</td>
+      </tr><tr class="">
+        <td>7.x-next+img</td>
+        <td>3799</td>
+        <td>21.5</td>
+        <td>3.7</td>
+        <td class="good">+13.5%</td>
+        <td>3270ms</td>
+        <td>2713ms</td>
+      </tr><tr class="base">
+        <td>nightly-master+img (base)</td>
+        <td>3799</td>
+        <td>21.5</td>
+        <td>3.3</td>
+        <td class="">0%</td>
+        <td>3805ms</td>
+        <td>3072ms</td>
+      </tr></tbody></table></div>
+<h2>next <span class="desc">· 3898 versions · 42.5 MB (unfiltered)</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Versions</th><th>MB</th><th>Req/s</th><th>Δ vs nightly-master+img</th><th>p95</th><th>mean</th></tr></thead>
+      <tbody><tr class="">
+        <td>5.33.0</td>
+        <td>3898</td>
+        <td>42.5</td>
+        <td>1.3</td>
+        <td class="bad">-11.8%</td>
+        <td>10188ms</td>
+        <td>7871ms</td>
+      </tr><tr class="">
+        <td>6.x-next+img</td>
+        <td>3898</td>
+        <td>42.5</td>
+        <td>1.4</td>
+        <td class="bad">-2.1%</td>
+        <td>8688ms</td>
+        <td>7105ms</td>
+      </tr><tr class="">
+        <td>7.x-next+img</td>
+        <td>3898</td>
+        <td>42.6</td>
+        <td>1.4</td>
+        <td class="bad">-2.8%</td>
+        <td>8292ms</td>
+        <td>7164ms</td>
+      </tr><tr class="base">
+        <td>nightly-master+img (base)</td>
+        <td>3898</td>
+        <td>42.6</td>
+        <td>1.4</td>
+        <td class="">0%</td>
+        <td>8458ms</td>
+        <td>6967ms</td>
+      </tr></tbody></table></div>
+<h2>@types/node <span class="desc">· 2356 versions · 16.3 MB (unfiltered)</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Versions</th><th>MB</th><th>Req/s</th><th>Δ vs nightly-master+img</th><th>p95</th><th>mean</th></tr></thead>
+      <tbody><tr class="">
+        <td>5.33.0</td>
+        <td>2356</td>
+        <td>16.3</td>
+        <td>3.0</td>
+        <td class="bad">-15.9%</td>
+        <td>4129ms</td>
+        <td>3311ms</td>
+      </tr><tr class="">
+        <td>6.x-next+img</td>
+        <td>2356</td>
+        <td>16.4</td>
+        <td>4.0</td>
+        <td class="good">+12.3%</td>
+        <td>2816ms</td>
+        <td>2484ms</td>
+      </tr><tr class="">
+        <td>7.x-next+img</td>
+        <td>2356</td>
+        <td>16.4</td>
+        <td>3.6</td>
+        <td class="good">+1.7%</td>
+        <td>3761ms</td>
+        <td>2737ms</td>
+      </tr><tr class="base">
+        <td>nightly-master+img (base)</td>
+        <td>2356</td>
+        <td>16.4</td>
+        <td>3.6</td>
+        <td class="">0%</td>
+        <td>3716ms</td>
+        <td>2782ms</td>
+      </tr></tbody></table></div>
+<h2>react <span class="desc">· 2912 versions · 9.4 MB (unfiltered)</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Versions</th><th>MB</th><th>Req/s</th><th>Δ vs nightly-master+img</th><th>p95</th><th>mean</th></tr></thead>
+      <tbody><tr class="">
+        <td>5.33.0</td>
+        <td>2912</td>
+        <td>9.4</td>
+        <td>6.1</td>
+        <td class="bad">-6.7%</td>
+        <td>1912ms</td>
+        <td>1638ms</td>
+      </tr><tr class="">
+        <td>6.x-next+img</td>
+        <td>2912</td>
+        <td>9.4</td>
+        <td>7.0</td>
+        <td class="good">+6.3%</td>
+        <td>1862ms</td>
+        <td>1438ms</td>
+      </tr><tr class="">
+        <td>7.x-next+img</td>
+        <td>2912</td>
+        <td>9.5</td>
+        <td>6.8</td>
+        <td class="good">+3.4%</td>
+        <td>1650ms</td>
+        <td>1480ms</td>
+      </tr><tr class="base">
+        <td>nightly-master+img (base)</td>
+        <td>2912</td>
+        <td>9.5</td>
+        <td>6.5</td>
+        <td class="">0%</td>
+        <td>1967ms</td>
+        <td>1530ms</td>
+      </tr></tbody></table></div>
+<h2>aws-sdk <span class="desc">· 1966 versions · 14.2 MB (unfiltered)</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Versions</th><th>MB</th><th>Req/s</th><th>Δ vs nightly-master+img</th><th>p95</th><th>mean</th></tr></thead>
+      <tbody><tr class="">
+        <td>5.33.0</td>
+        <td>1966</td>
+        <td>14.2</td>
+        <td>3.8</td>
+        <td class="bad">-15.7%</td>
+        <td>3171ms</td>
+        <td>2665ms</td>
+      </tr><tr class="">
+        <td>6.x-next+img</td>
+        <td>1966</td>
+        <td>14.2</td>
+        <td>4.0</td>
+        <td class="bad">-9.4%</td>
+        <td>2861ms</td>
+        <td>2484ms</td>
+      </tr><tr class="">
+        <td>7.x-next+img</td>
+        <td>1966</td>
+        <td>14.3</td>
+        <td>4.3</td>
+        <td class="bad">-2.5%</td>
+        <td>2551ms</td>
+        <td>2304ms</td>
+      </tr><tr class="base">
+        <td>nightly-master+img (base)</td>
+        <td>1966</td>
+        <td>14.3</td>
+        <td>4.5</td>
+        <td class="">0%</td>
+        <td>3483ms</td>
+        <td>2245ms</td>
+      </tr></tbody></table></div>
+<h2>eslint <span class="desc">· 426 versions · 2.8 MB (unfiltered)</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Versions</th><th>MB</th><th>Req/s</th><th>Δ vs nightly-master+img</th><th>p95</th><th>mean</th></tr></thead>
+      <tbody><tr class="">
+        <td>5.33.0</td>
+        <td>426</td>
+        <td>2.8</td>
+        <td>17.1</td>
+        <td class="bad">-21.9%</td>
+        <td>894ms</td>
+        <td>584ms</td>
+      </tr><tr class="">
+        <td>6.x-next+img</td>
+        <td>426</td>
+        <td>2.8</td>
+        <td>16.9</td>
+        <td class="bad">-23.0%</td>
+        <td>833ms</td>
+        <td>592ms</td>
+      </tr><tr class="">
+        <td>7.x-next+img</td>
+        <td>426</td>
+        <td>2.8</td>
+        <td>18.6</td>
+        <td class="bad">-15.3%</td>
+        <td>893ms</td>
+        <td>538ms</td>
+      </tr><tr class="base">
+        <td>nightly-master+img (base)</td>
+        <td>426</td>
+        <td>2.8</td>
+        <td>21.9</td>
+        <td class="">0%</td>
+        <td>533ms</td>
+        <td>456ms</td>
+      </tr></tbody></table></div>
+  <h2>Sources</h2>
+    <p class="desc">What each variant actually is. Docker images use mutable tags, so the digest + build date pin the exact build measured. (<code>+cache</code>/<code>+filter</code> variants are config toggles on the same source.)</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Variant</th><th>Source</th></tr></thead>
+      <tbody><tr><td>5.33.0</td><td>npm package <code>verdaccio@5.33.0</code></td></tr><tr><td>6.x-next+img</td><td>Docker image <code>verdaccio/verdaccio:6.x-next</code> · <span class="muted">sha256:e9da1bb5dc6f…</span> · built 2026-08-18</td></tr><tr><td>7.x-next+img</td><td>Docker image <code>verdaccio/verdaccio:7.x-next</code> · <span class="muted">sha256:ba55255e374f…</span> · built 2026-08-18</td></tr><tr><td>nightly-master+img</td><td>Docker image <code>verdaccio/verdaccio:nightly-master</code> · <span class="muted">sha256:10ddb9813fd1…</span> · built 2026-08-18</td></tr></tbody></table></div>
+</main></body></html>

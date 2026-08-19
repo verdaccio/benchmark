@@ -8,3 +8,4 @@ minimumReleaseAgeExclude:
   - '@verdaccio/*'
   - '@verdaccio-scope/*'
   - 'verdaccio-*'
+  - 'verdaccio'

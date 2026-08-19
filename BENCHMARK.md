@@ -18,6 +18,65 @@ overview see [README.md](README.md).
 `warm-install` / `proxy-install` are the client-felt install numbers. `serve` is where
 version-to-version serving differences show up unmasked by npm's download/extract cost.
 
+### Monorepo (deep publish, opt-in)
+
+`monorepo` is a heavy, **opt-in** scenario that publishes a whole monorepo — N packages
+(default **400**) — in one release with `lerna publish from-package`, measuring the total
+wall-clock per release. It stresses the publish path at scale: every package is a fresh,
+authenticated `npm publish`, so this is where cumulative per-request auth cost and storage
+churn surface.
+
+It is flagged `optIn` in `scenarios/index.mjs`, so it is **excluded from the default set** and
+never runs in `pnpm bench` / `pnpm docker:bench`. Run it explicitly (needs `lerna` + `git`,
+both baked into the Docker image):
+
+```sh
+pnpm docker:bench:monorepo                                   # v6=latest, 400 packages, samples 3 + 1 warmup
+pnpm docker:bench:monorepo -- --versions v6=6.1.6            # pick the version to test
+pnpm docker:bench:monorepo -- --versions v6=6.0.5,v7=next-7  # compare versions (one release each)
+pnpm docker:bench -- --scenarios monorepo --monorepo-packages 100 --samples 2 --warmup 1
+```
+
+- `--versions label=spec,…` — like every scenario, choose which Verdaccio version(s) to test;
+  it runs a full release per version. The dedicated script defaults to a single version
+  (`v6=latest`) because each run is heavy; override to compare.
+- `--monorepo-packages N` — how many packages to publish per release (default 400).
+- `--monorepo-per-package` — also run a second pass each round publishing the N packages
+  one-by-one with `npm publish` (serial, each timed), adding a per-package latency
+  distribution (median/p95/min/max) to the result's `extra.perPackage`. lerna publishes
+  concurrently so per-package timing can't come from the lerna run itself; this dedicated
+  serial pass is the accurate source. Doubles the publishes per round — use a small N.
+- One sample = one full release of all N packages; the summary median is the headline time,
+  and the result's `extra` carries the package count + throughput (packages/sec, also logged
+  live per round). Keep `--samples` low — each sample republishes all N packages.
+
+```sh
+pnpm docker:bench:monorepo -- --versions v6=6.1.6 --monorepo-packages 50 --monorepo-per-package
+# → lerna total + throughput, plus per-package median/p95 over the 50 publishes
+```
+
+**HTML report.** Render a version comparison page (same style as `report:compare`) from a
+monorepo run — release time + throughput, and the per-package distribution when present:
+
+```sh
+pnpm docker:bench:monorepo -- --versions v605=6.0.5,v616=6.1.6 --monorepo-packages 50 --monorepo-per-package
+pnpm report:monorepo        # newest run → reports/monorepo.html (or --input/--output/--title)
+```
+
+## Full suite across 5.x / 6.x / 7.x / master
+
+`pnpm bench:all` (`scripts/bench-all.sh`) runs the whole suite — core scenarios,
+monorepo, and large-packument (`bigpkg`) — across the latest **5.x** (npm `latest-5`),
+**6.x**/**7.x** (Docker `6.x-next`/`7.x-next`) and **master** (`nightly-master`), then
+builds the dashboard. It pulls the fresh published images first. Heavy (~30-60 min);
+raw results in `results/` (gitignored), pinned pages `reports/compare-all.html`,
+`reports/monorepo.html`, `reports/bigpkg.html`, and the dashboard in `_site/`.
+
+```sh
+pnpm bench:all           # default samples (10 core; monorepo/bigpkg tuned)
+pnpm bench:all 5         # fewer samples for a quicker pass
+```
+
 ## Docker (recommended)
 
 A container gives a clean, reproducible environment (Node 24 + `ab`, no host tooling
@@ -79,9 +138,102 @@ node scripts/bench.mjs \
   --upstream local \           # 'local' (primed Verdaccio) or 'npmjs' (real network)
   --frozen \                   # serve the frozen snapshot offline (see below)
   --out-dir /tmp/x \           # write results somewhere other than results/
+  --legacy-auth-cache \        # enable server.legacyAuthCache on the target (7.x/9.x)
   --serve-requests 2000 \      # ab request count per endpoint
   --serve-concurrency 20       # ab concurrency
 ```
+
+## Auth cache (`--legacy-auth-cache`)
+
+Verdaccio 7.x/9.x added `server.legacyAuthCache`, which caches successful legacy
+(Bearer) auth-token validations so **bcrypt doesn't re-run on every authenticated
+request** — the dominant cost of `publish`/`unpublish`/`monorepo` since 6.1. Pass
+`--legacy-auth-cache` to enable it on the target (optionally `--legacy-auth-cache-ttl
+<ms>`, default 30000). It applies to every benchmark type and both binary and Docker
+targets; versions that don't support the key ignore it.
+
+```sh
+# enable it for all targets
+pnpm docker:bench -- --scenarios publish --versions m=docker:verdaccio/verdaccio:nightly-master --samples 5 --legacy-auth-cache
+```
+
+**Compare off vs on in one run** — `--legacy-auth-cache-compare` runs EACH version twice
+(cache off + on), labeled `<v>` and `<v>+cache`, so a single report shows them side by side:
+
+```sh
+pnpm docker:bench -- --scenarios publish \
+  --versions v7=docker:verdaccio/verdaccio:7.x-next,m=docker:verdaccio/verdaccio:nightly-master \
+  --samples 5 --legacy-auth-cache-compare
+pnpm report:compare        # rows: v7, v7+cache, m, m+cache
+```
+
+Measured effect (nightly-master, publish): median ~477ms → ~291ms with the cache on
+— back near pre-bcrypt (`crypt`) levels. The setting is stamped into the result
+JSON (`settings.legacyAuthCache`).
+
+## Local tarballs (unpublished builds)
+
+To benchmark a Verdaccio build that isn't on npm, drop its `.tgz` into `tarballs/`
+(mounted into the container at `/app/tarballs`) and reference it by filename in
+`--versions` — any spec ending in `.tgz`/`.tar.gz` is treated as a local tarball:
+
+```sh
+# in a verdaccio checkout: `npm pack`  →  copy the .tgz into tarballs/
+pnpm docker:bench -- --versions v9=next-9,local=verdaccio-9.0.0-next.tgz --samples 5
+pnpm docker:bench:monorepo -- --versions local=verdaccio-9.0.0-next.tgz --monorepo-packages 100
+pnpm bench:compare -- --versions v9=next-9,local=verdaccio-9.0.0-next.tgz --scenarios publish
+```
+
+- Works across **every** benchmark type (bench, monorepo, compare) — they all
+  resolve versions through the same path (`resolveSpec` → `installBinary`).
+- Its identity in results/reports is the tarball's own version + a `+tar` suffix
+  (e.g. `9.0.0-next-9.25+tar`), so it never collides with a published version.
+- Rebuilding a same-named tarball re-installs automatically when its contents
+  change (a content hash is tracked). Tarballs are gitignored; see `tarballs/README.md`.
+
+## Docker-image targets (nightly / master / next-6 / next-7 …)
+
+Benchmark a published Verdaccio **Docker image** run as the target container. Prefix
+the spec with `docker:` and give the image ref; any published tag works:
+
+```sh
+# IMPORTANT: run the harness NATIVELY (it launches `docker run` for the target),
+# NOT inside the bench container. So use `pnpm bench` / node directly, not docker:bench.
+node scripts/bench.mjs --scenarios publish \
+  --versions v9=next-9,master=docker:verdaccio/verdaccio:nightly-master --samples 5
+node scripts/bench.mjs --scenarios monorepo --monorepo-packages 100 \
+  --versions n6=docker:verdaccio/verdaccio:6-next,n7=docker:verdaccio/verdaccio:next-7
+node scripts/report-compare.mjs   # or report-monorepo — render as usual
+```
+
+Local images work too — build one from a Verdaccio checkout and reference it by tag:
+
+```sh
+# in a verdaccio checkout: docker build -t verdaccio-local:dev .
+node scripts/bench.mjs --scenarios publish --versions dev=docker:verdaccio-local:dev --samples 5
+```
+
+Image resolution is **local-first**: if the tag already exists in the daemon (a local
+build, or a cached remote tag) it is used as-is; otherwise it is pulled. To refresh a
+cached remote tag, `docker pull` it (or delete the tag) before running.
+
+How it works:
+- The image is made available (local or pulled), then each target is a `docker run --rm` container:
+  storage is container-internal (fresh per run = free isolation), only the generated
+  config is bind-mounted read-only, and the port is published to `127.0.0.1`.
+- The uplink is auto-rewritten to `host.docker.internal` and the local/frozen upstream
+  is bound to `0.0.0.0`, so the container can proxy to the host-side upstream.
+- Identity in results/reports is `<tag>+img` (e.g. `nightly-master+img`), never colliding
+  with an npm version. Works in every benchmark type (bench, monorepo, compare).
+
+Runs both ways:
+- **Native harness** (`pnpm bench` / `node scripts/bench.mjs`): the target's port is published
+  to `127.0.0.1` and its uplink uses `host.docker.internal`.
+- **Containerized harness** (`pnpm docker:bench` / `docker compose run`): docker-out-of-docker —
+  the bench container mounts the host Docker socket (see `docker-compose.yml`) and the Docker CLI
+  is baked into the image, so it launches the target as a **sibling** container on its own network
+  (reached by name; uplink points at the bench container's IP). `VBENCH_IN_CONTAINER=1` selects
+  this mode automatically. So `docker:<image>` works through the containerized entry points too.
 
 ## Constant comparisons over time (frozen upstream)
 
@@ -207,6 +359,7 @@ scripts/
   bench.mjs              orchestrator: resolve → install → run scenarios → write results
   report.mjs             render one run's results JSON to an HTML report
   report-compare.mjs     version-comparison page from one run
+  report-monorepo.mjs    monorepo-publish comparison page (release time + per-package)
   report-history.mjs     deep 2021–2023 archive view
   import-history.mjs     rescue the old archive into results/history
   snapshot-upstream.mjs  build the frozen upstream snapshot

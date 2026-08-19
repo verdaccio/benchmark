@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from './lib/args.mjs';
 import { buildRunSummary, upsertRun } from './lib/runs.mjs';
+import { sourcesHtml } from './lib/report-common.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resultsDir = path.join(root, 'results');
@@ -16,6 +17,7 @@ const SCENARIO_DESC = {
   publish: 'Time for `npm publish` of a small package (new version each sample).',
   unpublish: 'Time for `npm unpublish --force` (version published untimed beforehand).',
   search: 'Time for `npm search` (Verdaccio /-/v1/search); storage warmed first. Constant only in --frozen mode.',
+  monorepo: 'Deep publish stress: total time to `lerna publish` a whole monorepo (N packages) per release; opt-in.',
 };
 
 const inputPath = args.input ? path.resolve(args.input) : await latestBenchJson();
@@ -104,6 +106,7 @@ function renderHtml(data) {
     ${renderEnv(data.env, data.versions)}
     ${timingSections}
     ${serveSection}
+    ${sourcesHtml(data)}
     <p class="desc" style="margin-top:32px">Lower is better for timings; higher req/s is better for serving. Best value per scenario is highlighted. Results are only comparable within one environment snapshot.</p>
   </main>
 </body>

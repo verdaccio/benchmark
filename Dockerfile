@@ -3,8 +3,19 @@
 FROM node:24-bookworm-slim
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends apache2-utils ca-certificates \
+ && apt-get install -y --no-install-recommends apache2-utils ca-certificates git curl \
  && rm -rf /var/lib/apt/lists/*
+
+# Docker CLI only (client, no daemon): lets the harness launch Docker-image targets
+# as sibling containers via the mounted host socket (docker-out-of-docker), so
+# `docker:<image>` specs work fully inside the container. Arch-aware static binary.
+RUN set -eux; \
+    case "$(dpkg --print-architecture)" in amd64) A=x86_64;; arm64) A=aarch64;; *) A=x86_64;; esac; \
+    curl -fsSL "https://download.docker.com/linux/static/stable/${A}/docker-27.3.1.tgz" \
+      | tar -xz --strip-components=1 -C /usr/local/bin docker/docker
+
+# Lerna + git power the opt-in `monorepo` publish scenario (400-package release).
+RUN npm install -g lerna@8 && npm cache clean --force
 
 # Keep npm's update notice off stdout/stderr so it can't pollute output.
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false \

@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from './lib/args.mjs';
+import { sourcesHtml } from './lib/report-common.mjs';
 
 // Render a version-comparison page from a single benchmark run: same metrics as
 // the per-run report, but framed as a head-to-head across versions ordered by
@@ -75,6 +76,7 @@ function renderHtml() {
   <p class="desc">Δ is versus the baseline. For durations, lower is better (green Δ = faster than baseline). For serve req/s, higher is better.</p>
   ${msSections}
   ${serveSection}
+  ${sourcesHtml(data)}
 </main></body></html>
 `;
 }

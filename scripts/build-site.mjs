@@ -87,19 +87,27 @@ function renderDashboard() {
     <p class="desc">Median per Verdaccio major across runs. Lower is better.${hasArchive ? ' The serve chart is seeded with the 2021–2023 archive (hollow points, dashed) — a <strong>different machine</strong>, so treat the archive→now step as directional, not exact.' : ''}</p>
     ${charts}
 
-    <p class="foot"><a href="./archive.html">Deep 2021–2023 archive →</a> · <a href="./all.html">All report pages →</a></p>`
+    <p class="foot"><a href="./all.html">All report pages →</a></p>`
   );
 }
 
-// Dedicated version-comparison pages (reports/compare-*.html), pinned separately
-// from the time-series dashboard.
+// Dedicated comparison pages (reports/compare-*.html, monorepo*.html, bigpkg*.html),
+// pinned separately from the time-series dashboard.
 function compareSection() {
-  const pages = htmlFiles.filter((f) => /^compare[-.]/.test(f)).sort();
+  const pages = htmlFiles.filter((f) => /^(compare[-.]|monorepo|bigpkg)/.test(f)).sort();
   if (!pages.length) return '';
   const items = pages
     .map((f) => {
-      const label = f.replace(/^compare-?/, '').replace(/\.html$/, '') || 'versions';
-      return `<li><a href="./${escapeHtml(f)}">Compare: ${escapeHtml(label)}</a></li>`;
+      const base = f.replace(/\.html$/, '');
+      let label;
+      if (base.startsWith('monorepo')) {
+        label = `Monorepo${base.replace(/^monorepo-?/, '') ? `: ${base.replace(/^monorepo-?/, '')}` : ''}`;
+      } else if (base.startsWith('bigpkg')) {
+        label = `Large packuments${base.replace(/^bigpkg-?/, '') ? `: ${base.replace(/^bigpkg-?/, '')}` : ''}`;
+      } else {
+        label = `Compare: ${base.replace(/^compare-?/, '') || 'versions'}`;
+      }
+      return `<li><a href="./${escapeHtml(f)}">${escapeHtml(label)}</a></li>`;
     })
     .join('');
   return `<h2>Version comparisons</h2>
